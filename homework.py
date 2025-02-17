@@ -1,4 +1,5 @@
 from datetime import time
+from operator import truediv
 
 
 def test_dark_theme_by_time():
@@ -6,11 +7,9 @@ def test_dark_theme_by_time():
     Протестируйте правильность переключения темной темы на сайте в зависимости от времени
     """
     current_time = time(hour=23)
-
     # TODO переключите темную тему в зависимости от времени суток (с 22 до 6 часов утра - ночь)
-    is_dark_theme = current_time.hour >= 22 or current_time.hour < 6 #  больше равно 22 часа ( то есть захватываем 23 ) , а если время 0 , 1 .... то условие меньше 6 часов , тогда ночная тема
 
-
+    is_dark_theme = current_time.hour >=22 or current_time.hour < 6
     assert is_dark_theme is True
 
 
@@ -24,25 +23,17 @@ def test_dark_theme_by_time_and_user_choice():
     """
     current_time = time(hour=16)
     dark_theme_enabled_by_user = True
-
-    if dark_theme_enabled_by_user is not None: #  # TODO переключите темную тему в зависимости от времени суток
-        if current_time.hour >= 22 or current_time.hour < 6:
-            is_dark_theme  = True
-        else :
-            is_dark_theme  = False
-
-
-
-    elif  dark_theme_enabled_by_user:
-        is_dark_theme = True
-
+    # TODO переключите темную тему в зависимости от времени суток,
+    #  но учтите что темная тема может быть включена вручную
+    if dark_theme_enabled_by_user:
+        is_dark_theme= dark_theme_enabled_by_user
     else:
-        is_dark_theme = False
-
+        if current_time.hour >=22 or current_time.hour < 6:
+            is_dark_theme= True
+        else:
+            is_dark_theme = False
 
     assert is_dark_theme is True
-
-#  но учтите что темная тема может быть включена вручную
 
 
 def test_find_suitable_user():
@@ -58,21 +49,19 @@ def test_find_suitable_user():
     ]
 
     # TODO найдите пользователя с именем "Olga"
-    suitable_users = next(user for user in users if user["name"] == "Olga")
+
+
+    for user in users:
+        if user['name'] == 'Olga':
+            suitable_users = user
+            break
     assert suitable_users == {"name": "Olga", "age": 45}
 
     # TODO найдите всех пользователей младше 20 лет
-    suitable_users = [user for user in users if user["age"] < 20]
-    assert suitable_users == [
-        {"name": "Stanislav", "age": 15},
-        {"name": "Maria", "age": 18},
-    ]
-
     suitable_users = []
     for user in users:
-        if user["age"] < 20:
-            suitable_users.append(user)
-
+        if user['age'] < 20:
+           suitable_users.append(user)
     assert suitable_users == [
         {"name": "Stanislav", "age": 15},
         {"name": "Maria", "age": 18},
@@ -112,5 +101,3 @@ def go_to_companyname_homepage(page_url):
 def find_registration_button_on_login_page(page_url, button_text):
     actual_result = print_function_name_and_args(find_registration_button_on_login_page, page_url, button_text)
     assert actual_result == "Find Registration Button On Login Page [https://companyname.com/login, Register]"
-
-
